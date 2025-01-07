@@ -14,19 +14,20 @@ export default function ProfilePage() {
   const router = useRouter();
 
   useEffect(() => {
-    const accessToken = localStorage.getItem('accessToken');
-    const refreshToken = localStorage.getItem('refreshToken');
+    
 
     const fetchProfile = async () => {
       try {    
         // 4. Récupérer le "token" du localStorage
+    const accessToken = localStorage.getItem('accessToken');
+    const refreshToken = localStorage.getItem('refreshToken');
         // 5. Faire la requête vers "/api/protected"
         const response = await fetch('/api/protected', {
           headers: { 'Authorization': `Bearer ${accessToken}` }
         });
 
         // 6. Si la réponse n'est pas bonne, a un status 401, que "isRefreshing" est "false" et qu'on a bien un "refreshToken"
-        if (!response.ok && !isRefreshing && refreshToken) {
+        if (!response.ok && response.status==403 && !isRefreshing && refreshToken) {
           // 7. Passer isRefreshing à "true"
           setIsRefreshing(true);
 
@@ -71,6 +72,7 @@ export default function ProfilePage() {
     };
 
     // 20. Rediriger vers la page "/login" si aucun token
+    const accessToken = localStorage.getItem('accessToken');
     if (!accessToken) {
       router.push('/login');
     } else {
